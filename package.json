@@ -1,0 +1,42 @@
+{
+  "name": "classmix",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/cjs/index.cjs.js",
+  "module": "dist/es/index.es.js",
+  "browser": "dist/umd/index.umd.js",
+  "types": "dist/index.es.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.es.d.ts",
+      "import": "./dist/es/index.es.js",
+      "require": "./dist/umd/index.cjs.js"
+    }
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@vitest/coverage-istanbul": "^3.2.4",
+    "happy-dom": "^18.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "16.1.2",
+    "msw": "^2.10.5",
+    "prettier": "3.6.2",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.4",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
+  },
+  "license": "MIT"
+}

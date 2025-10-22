@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/*'
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+      - run: npm test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm install -g npm@latest
+      - run: npm ci
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Determine version
+        id: vars
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            VERSION="0.0.0-main-${GITHUB_SHA::6}"
+            TAG="main"
+          elif [[ "${GITHUB_REF}" == refs/heads/release/* ]]; then
+            BRANCH="${GITHUB_REF#refs/heads/}"
+            BASE_VERSION="${BRANCH#release/}"
+            COUNTER=$(npm view ${{ github.repository }} dist-tags."rc-${BRANCH}" || echo 0)
+            NEXT=$((COUNTER+1))
+            VERSION="${BASE_VERSION}-rc.${NEXT}"
+            TAG="rc-${BRANCH}"
+          elif [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            TAG="latest"
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Update package.json version
+        run: |
+          npm version ${{ steps.vars.outputs.version }} --no-git-tag-version
+
+      - name: Publish to npm
+        run: |
+          npm publish --tag ${{ steps.vars.outputs.tag }} --access public
+
+      - name: Cleanup old RC tags
+        if: startsWith(github.ref, 'refs/heads/release/')
+        run: |
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          npm dist-tag ls ${{ github.repository }} | grep "rc-${BRANCH}" | awk '{print $1}' | while read tag; do
+            if [[ "$tag" != "${{ steps.vars.outputs.tag }}" ]]; then
+              npm dist-tag rm ${{ github.repository }} "$tag" || true
+            fi
+          done
