@@ -27,19 +27,19 @@ export const cm = function classMax(...args: ClassType[]): string {
   }, '');
 };
 
-cm.post = function classMaxPostfix(postfix: string, delim?: string) {
+export function post(postfix: string, delim?: string): string {
   const d = delim ?? ':';
   return `post:${d}${postfix}`;
-};
+}
 
-cm.pre = function classMaxPrefix(prefix: string, delim?: string) {
+export function pre(prefix: string, delim?: string): string {
   const d = delim ?? ':';
   return `pre:${prefix}${d}`;
-};
+}
 
-cm.assign = function classMixAssign(classString: string, suffix: string) {
-  return classString
-    .split(' ')
-    .map((key) => handleSuffix(key, suffix))
-    .join(' ');
-};
+export function assign(classString: string, suffix: string): string {
+  return classString.split(' ').reduce((acc, next) => {
+    const cls = handleSuffix(next, suffix);
+    return `${acc} ${cls}`.trim();
+  }, '');
+}

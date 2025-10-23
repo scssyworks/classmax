@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { cm } from '.';
+import { assign, cm, post, pre } from '.';
 
 describe('cm', () => {
   it('should create className string', () => {
@@ -21,34 +21,26 @@ describe('cm', () => {
 
   it('should apply prefix to class', () => {
     expect(cm('foo', 'bar', { baz: 'hello' })).toBe('foo bar hello:baz');
-    expect(cm('foo', 'bar', { baz: cm.pre('hello') })).toBe(
-      'foo bar hello:baz',
-    );
-    expect(cm('foo', 'bar', { baz: cm.pre('hello', '~') })).toBe(
+    expect(cm('foo', 'bar', { baz: pre('hello') })).toBe('foo bar hello:baz');
+    expect(cm('foo', 'bar', { baz: pre('hello', '~') })).toBe(
       'foo bar hello~baz',
     );
   });
 
   it('should apply postfix to class', () => {
-    expect(cm('foo', 'bar', { baz: cm.post('hello') })).toBe(
-      'foo bar baz:hello',
-    );
-    expect(cm('foo', 'bar', { baz: cm.post('hello', '~') })).toBe(
+    expect(cm('foo', 'bar', { baz: post('hello') })).toBe('foo bar baz:hello');
+    expect(cm('foo', 'bar', { baz: post('hello', '~') })).toBe(
       'foo bar baz~hello',
     );
   });
 
   it('should apply prefix or postfix to all classes', () => {
-    expect(cm.assign('foo baz', cm.pre('hello'))).toBe('hello:foo hello:baz');
-    expect(cm.assign('foo baz', cm.post('hello'))).toBe('foo:hello baz:hello');
-    expect(cm.assign('foo baz', cm.pre('hello', '~'))).toBe(
-      'hello~foo hello~baz',
+    expect(assign('foo baz', pre('hello'))).toBe('hello:foo hello:baz');
+    expect(assign('foo baz', post('hello'))).toBe('foo:hello baz:hello');
+    expect(assign('foo baz', pre('hello', '~'))).toBe('hello~foo hello~baz');
+    expect(assign('foo baz', post('hello', '~'))).toBe('foo~hello baz~hello');
+    expect(cm(assign(cm('foo', 'bar'), 'world'), { baz: post('hello') })).toBe(
+      'world:foo world:bar baz:hello',
     );
-    expect(cm.assign('foo baz', cm.post('hello', '~'))).toBe(
-      'foo~hello baz~hello',
-    );
-    expect(
-      cm(cm.assign(cm('foo', 'bar'), 'world'), { baz: cm.post('hello') }),
-    ).toBe('world:foo world:bar baz:hello');
   });
 });

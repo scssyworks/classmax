@@ -13,16 +13,16 @@ npm i classmax
 ## Usage
 
 ```ts
-import { cm } from 'classmax';
+import { cm, post, pre, assign } from 'classmax';
 
 cm('foo', 'bar', { baz: true }); // foo bar baz
 cm('foo', { bar: true, baz: 'hello' }); // foo bar hello:baz
 cm('foo', null, undefined, false, true, 0, 1, {
   bar: false,
-  baz: cm.post('hello'),
+  baz: post('hello'),
 }); // foo baz:hello
-cm('foo', { bar: false, baz: cm.post('hello', '~') }); // foo baz~hello
-cm.assign(cm('foo', { bar: true, baz: 'hello' }), cm.post('hello')); // foo:hello bar:hello hello:baz:hello
+cm('foo', { bar: false, baz: post('hello', '~') }); // foo baz~hello
+assign(cm('foo', { bar: true, baz: 'hello' }), post('hello')); // foo:hello bar:hello hello:baz:hello
 ```
 
 These are just few examples. Classmax does everything that `classNames` can with extra functionality sprinkled on top.
@@ -61,7 +61,7 @@ cm('foo', 'bar', { baz: 'pre:' }); // foo bar baz
 cm('foo', 'bar', { baz: 'post:' }); // foo bar baz
 ```
 
-It's weird. I know! To make it work use `cm.pre('pre:')` and `cm.post('post:')`.
+It's weird. I know! To make it work use `pre('pre:')` and `post('post:')`.
 
 ## Disclaimer
 
