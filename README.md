@@ -59,7 +59,7 @@ cm('foo', 'bar', { baz: 'pre:' }); // foo bar baz
 cm('foo', 'bar', { baz: 'post:' }); // foo bar baz
 ```
 
-It's weird. I know! But to make it work use `cm.pre('pre:')` and `cm.post('post:')`.
+It's weird. I know! To make it work use `cm.pre('pre:')` and `cm.post('post:')`.
 
 ## Disclaimer
 
