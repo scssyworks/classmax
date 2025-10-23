@@ -1,3 +1,5 @@
+[![CI](https://github.com/scssyworks/classmax/actions/workflows/ci.yaml/badge.svg)](https://github.com/scssyworks/classmax/actions/workflows/ci.yaml)
+
 # Classmax
 
 Classmax is utility to construct className strings conditionally (similar to `classNames` and `clsx`), with option to prefix or postfix class modifiers which are very common with modern css libraries like tailwind.
