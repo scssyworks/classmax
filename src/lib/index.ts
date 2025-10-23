@@ -1,4 +1,4 @@
-export const classMix = (
+export const cm = (
   ...args: (
     | string
     | null
@@ -14,7 +14,7 @@ export const classMix = (
       if (typeof curr === 'string') {
         return `${classString} ${curr}`;
       }
-      return `${classString} ${classMix(...Object.keys(curr).filter((key) => curr[key]))}`;
+      return `${classString} ${cm(...Object.keys(curr).filter((key) => curr[key]))}`;
     }, '')
     .trim();
 };

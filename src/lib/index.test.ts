@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { classMix } from '.';
+import { cm } from '.';
 
-describe('classMix', () => {
+describe('cm', () => {
   it('should create className string', () => {
-    expect(classMix('foo', 'bar', { baz: true })).toBe('foo bar baz');
+    expect(cm('foo', 'bar', { baz: true })).toBe('foo bar baz');
   });
 });

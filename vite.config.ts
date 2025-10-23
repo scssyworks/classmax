@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: 'src/main.ts',
-      name: 'classmix',
+      name: 'classmax',
       fileName: (format) => `${format}/index.${format}.js`,
       formats: ['es', 'cjs', 'umd'],
     },
