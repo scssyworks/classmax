@@ -16,12 +16,17 @@ export const cm = function classMax(...args: ClassType[]): string {
     return trim(
       `${classString} ${cm(
         ...Object.entries(curr).reduce<string[]>((acc, next) => {
-          const [key, value] = next;
-          if (isBool(value) && value) {
-            acc.push(key);
-          }
-          if (isString(value) && trim(value)) {
-            acc.push(handleSuffix(key, value));
+          const [keyString, value] = next;
+          const keys = keyString.split(' ');
+          const isBoolValue = isBool(value) && value;
+          const isStringValue = isString(value) && trim(value);
+          for (const key of keys) {
+            if (isBoolValue) {
+              acc.push(key);
+            }
+            if (isStringValue) {
+              acc.push(handleSuffix(key, value));
+            }
           }
           return acc;
         }, []),
