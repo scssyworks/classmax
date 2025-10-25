@@ -1,38 +1,35 @@
-import { DELIM, POST, PRE } from './const';
+import { DELIM, EMPTY, POST, PRE, SPACE } from './const';
 import type { ClassType } from './index.types';
-import { handleSuffix, isBool, isObject, isString, trim } from './utils';
+import { getSpacer, handleSuffix, isString } from './utils';
 
 export const cm = function classMax(...args: ClassType[]): string {
-  return args.reduce<string>((classString, curr) => {
-    if (!curr || (!isObject(curr) && !isString(curr))) {
-      return trim(classString);
-    }
-    if (isString(curr)) {
-      return trim(`${classString} ${curr}`);
-    }
-    if (Array.isArray(curr)) {
-      return trim(`${classString} ${cm(...curr)}`);
-    }
-    return trim(
-      `${classString} ${cm(
-        ...Object.entries(curr).reduce<string[]>((acc, next) => {
-          const [keyString, value] = next;
-          const keys = keyString.split(' ');
-          const isBoolValue = isBool(value) && value;
-          const isStringValue = isString(value) && trim(value);
-          for (const key of keys) {
-            if (isBoolValue) {
-              acc.push(key);
-            }
-            if (isStringValue) {
-              acc.push(handleSuffix(key, value));
-            }
+  let classString = EMPTY;
+
+  for (const cls of args) {
+    let spacer = getSpacer(classString);
+    if (isString(cls)) {
+      classString += `${spacer}${cls}`;
+    } else if (Array.isArray(cls)) {
+      classString += `${spacer}${cm(...cls)}`;
+    } else if (cls && typeof cls === 'object') {
+      const entries = Object.entries(cls);
+      for (const [keyString, value] of entries) {
+        const keys = keyString.split(SPACE);
+        const isStr = isString(value) && value;
+        for (const key of keys) {
+          spacer = getSpacer(classString);
+          if (value === true) {
+            classString += `${spacer}${key}`;
           }
-          return acc;
-        }, []),
-      )}`,
-    );
-  }, '');
+          if (isStr) {
+            classString += `${spacer}${handleSuffix(key, value)}`;
+          }
+        }
+      }
+    }
+  }
+
+  return classString;
 };
 
 export function post(postfix: string, delim?: string): string {
@@ -45,9 +42,6 @@ export function pre(prefix: string, delim?: string): string {
   return `${PRE}${prefix}${d}`;
 }
 
-export function assign(classString: string, suffix: string): string {
-  return classString.split(' ').reduce((acc, next) => {
-    const cls = handleSuffix(next, suffix);
-    return trim(`${acc} ${cls}`);
-  }, '');
+export function assign(classStr: string, suffix: string): string {
+  return cm({ [classStr]: suffix });
 }
