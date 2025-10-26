@@ -1,47 +1,47 @@
 import { DELIM, EMPTY, POST, PRE, SPACE } from './const';
 import type { ClassType } from './index.types';
-import { getSpacer, handleSuffix, isString } from './utils';
+import { handleSuffix, isString } from './utils';
 
-export const cm = function classMax(...args: ClassType[]): string {
-  let classString = EMPTY;
+export function cm(...args: ClassType[]): string;
+export function cm(): string {
+  let cStr = EMPTY;
 
-  for (const cls of args) {
-    let spacer = getSpacer(classString);
-    if (isString(cls)) {
-      classString += `${spacer}${cls}`;
-    } else if (Array.isArray(cls)) {
-      classString += `${spacer}${cm(...cls)}`;
-    } else if (cls && typeof cls === 'object') {
-      const entries = Object.entries(cls);
-      for (const [keyString, value] of entries) {
-        const keys = keyString.split(SPACE);
-        const isStr = isString(value) && value;
-        for (const key of keys) {
-          spacer = getSpacer(classString);
-          if (value === true) {
-            classString += `${spacer}${key}`;
-          }
-          if (isStr) {
-            classString += `${spacer}${handleSuffix(key, value)}`;
+  for (const cls of arguments) {
+    if (cls) {
+      if (isString(cls) || typeof cls === 'number') {
+        cStr = cStr && (cStr += SPACE);
+        cStr += cls;
+      } else if (Array.isArray(cls)) {
+        for (const clsInner of cls) {
+          cStr = cStr && (cStr += SPACE);
+          cStr += cm(clsInner);
+        }
+      } else if (typeof cls === 'object') {
+        for (const keyStr in cls) {
+          const keys = keyStr.split(SPACE);
+          const value = cls[keyStr];
+          if (value) {
+            const isStr = isString(value);
+            for (const key of keys) {
+              cStr = cStr && (cStr += SPACE);
+              if (value === true) {
+                cStr += key;
+              }
+              if (isStr) {
+                cStr += handleSuffix(key, value);
+              }
+            }
           }
         }
       }
     }
   }
 
-  return classString;
-};
-
-export function post(postfix: string, delim?: string): string {
-  const d = delim ?? DELIM;
-  return `${POST}${d}${postfix}`;
+  return cStr;
 }
 
-export function pre(prefix: string, delim?: string): string {
-  const d = delim ?? DELIM;
-  return `${PRE}${prefix}${d}`;
-}
+export const post = (postfix: string, delim?: string): string =>
+  `${POST}${delim || DELIM}${postfix}`;
 
-export function assign(classStr: string, suffix: string): string {
-  return cm({ [classStr]: suffix });
-}
+export const pre = (prefix: string, delim?: string): string =>
+  `${PRE}${prefix}${delim || DELIM}`;

@@ -13,16 +13,22 @@ npm i classmax
 ## Usage
 
 ```ts
-import { cm, post, pre, assign } from 'classmax';
+import { cm, post, pre } from 'classmax';
 
 cm('foo', 'bar', { baz: true }); // foo bar baz
 cm('foo', { bar: true, baz: 'hello' }); // foo bar hello:baz
 cm('foo', null, undefined, false, true, 0, 1, {
   bar: false,
   baz: post('hello'),
-}); // foo baz:hello
+}); // foo 1 baz:hello
 cm('foo', { bar: false, baz: post('hello', '~') }); // foo baz~hello
-assign(cm('foo', { bar: true, baz: 'hello' }), post('hello')); // foo:hello bar:hello hello:baz:hello
+```
+
+Assigning prefix/postfix to all classes at once
+
+```ts
+cm({ 'foo bar baz': pre('hello') }); // hello:foo hello:bar hello:baz
+cm({ [cm('foo', { bar: true, baz: 'hello' })]: post('hello') }); // foo:hello bar:hello hello:baz:hello
 ```
 
 These are just few examples. Classmax does everything that `classNames` can with extra functionality sprinkled on top.
@@ -45,23 +51,14 @@ clsx('foo', 'bar', { baz: 'hello' }); // foo bar baz
 cm('foo', 'bar', { baz: Boolean('hello') }); // foo bar baz
 ```
 
-Classmax also ignore non string values to keep the class string cleaner. For example:
+There are special strings: `<:` and `>:` which will not apply by default.
 
 ```ts
-cm('hello', 'world', 0, 1, true, false); // hello world
-classNames('hello', 'world', 0, 1, true, false); // hello world 1
+cm('foo', 'bar', { baz: '<:' }); // foo bar baz
+cm('foo', 'bar', { baz: '>:' }); // foo bar baz
 ```
 
-If you really want `1` to be there then convert it into a string.
-
-There are special strings: `pre:` and `post:` which will not apply by default.
-
-```ts
-cm('foo', 'bar', { baz: 'pre:' }); // foo bar baz
-cm('foo', 'bar', { baz: 'post:' }); // foo bar baz
-```
-
-It's weird. I know! To make it work use `pre('pre:')` and `post('post:')`.
+It's weird. I know! To make it work use `pre('>:')` and `post('<:')`.
 
 ## Disclaimer
 
