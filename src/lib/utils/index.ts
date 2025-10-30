@@ -11,5 +11,8 @@ export const handleSuffix = (key: string, value: Primitives) => {
     }
     return value + DELIM + key;
   }
+  if (typeof value === 'number') {
+    return value + DELIM + key;
+  }
   return value === true && key;
 };

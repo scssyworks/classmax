@@ -12,6 +12,9 @@ describe('cm', () => {
     );
     expect(cm('foo', 'bar', { baz: true })).toBe('foo bar baz');
     expect(cm('foo', 'bar', [['baz'], 'zoo'])).toBe('foo bar baz zoo');
+    expect(cm('foo', 'bar', [['baz', null, undefined, 0, ''], 'zoo'])).toBe(
+      'foo bar baz zoo',
+    );
     expect(cm('foo', 'bar', ['baz'], true && 'zoo')).toBe('foo bar baz zoo');
     expect(cm('foo', 'bar', [{ baz: true }])).toBe('foo bar baz');
     expect(cm('foo', { bar: false }, { baz: true, zoo: true })).toBe(
@@ -24,6 +27,7 @@ describe('cm', () => {
 
   it('should apply prefix to class', () => {
     expect(cm('foo', 'bar', { baz: 'hello' })).toBe('foo bar hello:baz');
+    expect(cm('foo', 'bar', { baz: 1 }, { zoo: 0 })).toBe('foo bar 1:baz');
     expect(cm('foo', 'bar', { baz: pre('hello') })).toBe('foo bar hello:baz');
     expect(cm('foo', 'bar', { baz: pre('hello', '~') })).toBe(
       'foo bar hello~baz',
@@ -58,9 +62,12 @@ describe('cm', () => {
     expect(cm('foo', 'bar', { baz: '>:' })).toBe('foo bar baz');
   });
 
-  it('should ignore nested objects', () => {
+  it('should ignore nested and inherited objects', () => {
     expect(cm('foo', { bar: true }, { baz: { baz: true } } as any)).toBe(
       'foo bar',
     );
+    expect(
+      cm('foo', Object.create({ bar: true }), { baz: { baz: true } } as any),
+    ).toBe('foo');
   });
 });

@@ -14,22 +14,28 @@ export function cm(): string {
       if (typeof cls === 'string' || typeof cls === 'number') {
         cStr += (cStr ? SPACE : EMPTY) + cls;
       } else if (Array.isArray(cls)) {
-        var jdx = 0;
-        for (; jdx < cls.length; jdx++) {
+        var jdx = 0,
+          cLen = cls.length;
+        for (; jdx < cLen; jdx++) {
           var clsInner = cls[jdx];
-          cStr += (cStr ? SPACE : EMPTY) + cm(clsInner);
+          if (clsInner) {
+            cStr += (cStr ? SPACE : EMPTY) + cm(clsInner);
+          }
         }
       } else if (typeof cls === 'object') {
         var keyStr: string;
         for (keyStr in cls) {
-          var keys = keyStr.split(SPACE),
-            value = cls[keyStr],
-            key: string,
-            obVal: string | boolean;
-          if (value) {
-            for (key of keys) {
-              if ((obVal = handleSuffix(key, value))) {
-                cStr += (cStr ? SPACE : EMPTY) + obVal;
+          if (cls.hasOwnProperty(keyStr)) {
+            var keys = keyStr.split(SPACE),
+              kdx = 0,
+              value = cls[keyStr],
+              kLen = keys.length,
+              obVal: string | boolean;
+            if (value) {
+              for (; kdx < kLen; kdx++) {
+                if ((obVal = handleSuffix(keys[kdx], value))) {
+                  cStr += (cStr ? SPACE : EMPTY) + obVal;
+                }
               }
             }
           }
