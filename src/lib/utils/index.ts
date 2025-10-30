@@ -1,19 +1,15 @@
 import { DELIM, POST, PRE } from '../const';
+import type { Primitives } from '../index.types';
 
-export const startsWith = (value: string, input: string) =>
-  value.startsWith(input);
-
-export const substr = (value: string, index: number) => value.substring(index);
-
-export const isString = <T>(value: T | string): value is string =>
-  typeof value === 'string';
-
-export const handleSuffix = (key: string, value: string) => {
-  if (startsWith(value, POST)) {
-    return `${key}${substr(value, POST.length)}`;
+export const handleSuffix = (key: string, value: Primitives) => {
+  if (typeof value === 'string') {
+    if (value.startsWith(POST)) {
+      return `${key}${value.substring(POST.length)}`;
+    }
+    if (value.startsWith(PRE)) {
+      return `${value.substring(PRE.length)}${key}`;
+    }
+    return `${value}${DELIM}${key}`;
   }
-  if (startsWith(value, PRE)) {
-    return `${substr(value, PRE.length)}${key}`;
-  }
-  return `${value}${DELIM}${key}`;
+  return value === true && key;
 };

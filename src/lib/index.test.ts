@@ -57,4 +57,10 @@ describe('cm', () => {
     expect(cm('foo', 'bar', { baz: '<:' })).toBe('foo bar baz');
     expect(cm('foo', 'bar', { baz: '>:' })).toBe('foo bar baz');
   });
+
+  it('should ignore nested objects', () => {
+    expect(cm('foo', { bar: true }, { baz: { baz: true } } as any)).toBe(
+      'foo bar',
+    );
+  });
 });

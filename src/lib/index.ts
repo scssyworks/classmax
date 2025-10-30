@@ -1,34 +1,38 @@
 import { DELIM, EMPTY, POST, PRE, SPACE } from './const';
 import type { ClassType } from './index.types';
-import { handleSuffix, isString } from './utils';
+import { handleSuffix } from './utils';
 
 export function cm(...args: ClassType[]): string;
 export function cm(): string {
-  let cStr = EMPTY;
+  var cStr = EMPTY,
+    cls: ClassType,
+    clsInner: ClassType,
+    keyStr: string,
+    keys: string[],
+    key: string,
+    obVal: string | boolean,
+    idx = 0,
+    jdx = 0,
+    len = arguments.length;
 
-  for (const cls of arguments) {
-    if (cls) {
-      if (isString(cls) || typeof cls === 'number') {
-        cStr = cStr && (cStr += SPACE);
-        cStr += cls;
+  for (; idx < len; idx++) {
+    if ((cls = arguments[idx])) {
+      if (typeof cls === 'string' || typeof cls === 'number') {
+        cStr += (cStr ? SPACE : EMPTY) + cls;
       } else if (Array.isArray(cls)) {
-        for (const clsInner of cls) {
-          cStr = cStr && (cStr += SPACE);
-          cStr += cm(clsInner);
+        jdx = 0;
+        for (; jdx < cls.length; jdx++) {
+          clsInner = cls[jdx];
+          cStr += (cStr ? SPACE : EMPTY) + cm(clsInner);
         }
       } else if (typeof cls === 'object') {
-        for (const keyStr in cls) {
-          const keys = keyStr.split(SPACE);
+        for (keyStr in cls) {
+          keys = keyStr.split(SPACE);
           const value = cls[keyStr];
           if (value) {
-            const isStr = isString(value);
-            for (const key of keys) {
-              cStr = cStr && (cStr += SPACE);
-              if (value === true) {
-                cStr += key;
-              }
-              if (isStr) {
-                cStr += handleSuffix(key, value);
+            for (key of keys) {
+              if ((obVal = handleSuffix(key, value))) {
+                cStr += (cStr ? SPACE : EMPTY) + obVal;
               }
             }
           }
@@ -41,7 +45,7 @@ export function cm(): string {
 }
 
 export const post = (postfix: string, delim?: string): string =>
-  `${POST}${delim || DELIM}${postfix}`;
+  POST + (delim || DELIM) + postfix;
 
 export const pre = (prefix: string, delim?: string): string =>
-  `${PRE}${prefix}${delim || DELIM}`;
+  PRE + prefix + (delim || DELIM);

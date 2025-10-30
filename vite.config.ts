@@ -27,7 +27,7 @@ export default defineConfig({
       },
       enabled: true,
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/test-utils/**/*.{ts,tsx}'],
+      exclude: ['src/test-utils/**/*.{ts,tsx}', 'src/benchmark/**/*.{ts,tsx}'],
     },
     watch: false,
   },
