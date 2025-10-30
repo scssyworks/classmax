@@ -6,13 +6,7 @@ export function cm(...args: ClassType[]): string;
 export function cm(): string {
   var cStr = EMPTY,
     cls: ClassType,
-    clsInner: ClassType,
-    keyStr: string,
-    keys: string[],
-    key: string,
-    obVal: string | boolean,
     idx = 0,
-    jdx = 0,
     len = arguments.length;
 
   for (; idx < len; idx++) {
@@ -20,15 +14,18 @@ export function cm(): string {
       if (typeof cls === 'string' || typeof cls === 'number') {
         cStr += (cStr ? SPACE : EMPTY) + cls;
       } else if (Array.isArray(cls)) {
-        jdx = 0;
+        var jdx = 0;
         for (; jdx < cls.length; jdx++) {
-          clsInner = cls[jdx];
+          var clsInner = cls[jdx];
           cStr += (cStr ? SPACE : EMPTY) + cm(clsInner);
         }
       } else if (typeof cls === 'object') {
+        var keyStr: string;
         for (keyStr in cls) {
-          keys = keyStr.split(SPACE);
-          const value = cls[keyStr];
+          var keys = keyStr.split(SPACE),
+            value = cls[keyStr],
+            key: string,
+            obVal: string | boolean;
           if (value) {
             for (key of keys) {
               if ((obVal = handleSuffix(key, value))) {
