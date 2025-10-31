@@ -7,10 +7,11 @@ export function cm(): string {
   var cStr = EMPTY,
     cls: ClassType,
     idx = 0,
-    len = arguments.length;
+    args = arguments,
+    len = args.length;
 
   for (; idx < len; idx++) {
-    if ((cls = arguments[idx])) {
+    if ((cls = args[idx])) {
       if (typeof cls === 'string' || typeof cls === 'number') {
         cStr += (cStr ? SPACE : EMPTY) + cls;
       } else if (Array.isArray(cls)) {
@@ -47,8 +48,18 @@ export function cm(): string {
   return cStr;
 }
 
-export const post = (postfix: string, delim?: string): string =>
-  POST + (delim || DELIM) + postfix;
-
-export const pre = (prefix: string, delim?: string): string =>
-  PRE + prefix + (delim || DELIM);
+export function post(
+  postfix: string | number,
+  delim?: string,
+): string | boolean {
+  if (typeof postfix === 'string' || typeof postfix === 'number') {
+    return POST + (typeof delim === 'string' ? delim : DELIM) + postfix;
+  }
+  return true;
+}
+export function pre(prefix: string | number, delim?: string): string | boolean {
+  if (typeof prefix === 'string' || typeof prefix === 'number') {
+    return PRE + prefix + (typeof delim === 'string' ? delim : DELIM);
+  }
+  return true;
+}

@@ -35,6 +35,21 @@ describe('cm', () => {
     expect(cm('foo', 'bar', { 'baz zoo pic': pre('hello', '~') })).toBe(
       'foo bar hello~baz hello~zoo hello~pic',
     );
+    expect(cm('foo', 'bar', { 'baz zoo pic': pre('hello', '') })).toBe(
+      'foo bar hellobaz hellozoo hellopic',
+    );
+    expect(cm('foo', 'bar', { 'baz zoo pic': pre(1) })).toBe(
+      'foo bar 1:baz 1:zoo 1:pic',
+    );
+    expect(cm('foo', 'bar', { 'baz zoo pic': pre('hello', null as any) })).toBe(
+      'foo bar hello:baz hello:zoo hello:pic',
+    );
+    expect(cm('foo', 'bar', { 'baz zoo pic': pre('hello', {} as any) })).toBe(
+      'foo bar hello:baz hello:zoo hello:pic',
+    );
+    expect(cm('foo', 'bar', { 'baz zoo pic': pre({} as any, {} as any) })).toBe(
+      'foo bar baz zoo pic',
+    );
   });
 
   it('should apply postfix to class', () => {
@@ -42,6 +57,21 @@ describe('cm', () => {
     expect(cm('foo', 'bar', { baz: post('hello', '~') })).toBe(
       'foo bar baz~hello',
     );
+    expect(cm('foo', 'bar', { 'baz zoo pic': post('hello', '') })).toBe(
+      'foo bar bazhello zoohello pichello',
+    );
+    expect(cm('foo', 'bar', { 'baz zoo pic': post(1) })).toBe(
+      'foo bar baz:1 zoo:1 pic:1',
+    );
+    expect(
+      cm('foo', 'bar', { 'baz zoo pic': post('hello', null as any) }),
+    ).toBe('foo bar baz:hello zoo:hello pic:hello');
+    expect(cm('foo', 'bar', { 'baz zoo pic': post('hello', {} as any) })).toBe(
+      'foo bar baz:hello zoo:hello pic:hello',
+    );
+    expect(
+      cm('foo', 'bar', { 'baz zoo pic': post({} as any, {} as any) }),
+    ).toBe('foo bar baz zoo pic');
   });
 
   it('should apply prefix or postfix to all classes', () => {
