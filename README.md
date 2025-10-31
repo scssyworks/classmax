@@ -1,4 +1,4 @@
-[![CI](https://github.com/scssyworks/classmax/actions/workflows/ci.yaml/badge.svg)](https://github.com/scssyworks/classmax/actions/workflows/ci.yaml)
+[![CI](https://github.com/scssyworks/classmax/actions/workflows/ci.yaml/badge.svg)](https://github.com/scssyworks/classmax/actions/workflows/ci.yaml) ![NPM License](https://img.shields.io/npm/l/classmax?color=blue) ![NPM Version](https://img.shields.io/npm/v/classmax) ![Codecov](https://img.shields.io/codecov/c/github/scssyworks/classmax)
 
 # Classmax
 
