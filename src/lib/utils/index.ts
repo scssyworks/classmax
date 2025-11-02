@@ -18,7 +18,7 @@ export function isStrOrNum<T>(
 
 export function handleSuffix(key: string, value: Primitives) {
   if (isStrOrNum(value)) {
-    var val = value + '';
+    var val = value + EMPTY;
     if (val.startsWith(POST)) {
       return key + val.substring(PLEN);
     }
