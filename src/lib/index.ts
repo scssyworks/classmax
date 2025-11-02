@@ -1,42 +1,27 @@
 import { DELIM, EMPTY, POST, PRE, SPACE } from './const';
 import type { ClassType } from './index.types';
-import { handleSuffix } from './utils';
+import { append, handleSuffix, hasOwn, isStrOrNum } from './utils';
 
 export function cm(...args: ClassType[]): string;
 export function cm(): string {
   var cStr = EMPTY,
     cls: ClassType,
-    idx = 0,
-    args = arguments,
-    len = args.length;
-
-  for (; idx < len; idx++) {
+    args = arguments;
+  for (var idx = 0; idx < args.length; idx++) {
     if ((cls = args[idx])) {
-      if (typeof cls === 'string' || typeof cls === 'number') {
-        cStr += (cStr ? SPACE : EMPTY) + cls;
+      if (isStrOrNum(cls)) {
+        cStr = append(cStr, cls);
       } else if (Array.isArray(cls)) {
-        var jdx = 0,
-          cLen = cls.length;
-        for (; jdx < cLen; jdx++) {
-          var clsInner = cls[jdx];
-          if (clsInner) {
-            cStr += (cStr ? SPACE : EMPTY) + cm(clsInner);
-          }
+        for (var jdx = 0; jdx < cls.length; jdx++) {
+          cStr = append(cStr, cm(cls[jdx]));
         }
       } else if (typeof cls === 'object') {
-        var keyStr: string;
-        for (keyStr in cls) {
-          if (cls.hasOwnProperty(keyStr)) {
-            var keys = keyStr.split(SPACE),
-              kdx = 0,
-              value = cls[keyStr],
-              kLen = keys.length,
-              obVal: string | boolean;
-            if (value) {
-              for (; kdx < kLen; kdx++) {
-                if ((obVal = handleSuffix(keys[kdx], value))) {
-                  cStr += (cStr ? SPACE : EMPTY) + obVal;
-                }
+        for (var keyStr in cls) {
+          if (hasOwn.call(cls, keyStr)) {
+            var keys = keyStr.split(SPACE);
+            if (cls[keyStr]) {
+              for (var kdx = 0; kdx < keys.length; kdx++) {
+                cStr = append(cStr, handleSuffix(keys[kdx], cls[keyStr]));
               }
             }
           }
@@ -52,14 +37,14 @@ export function post(
   postfix: string | number,
   delim?: string,
 ): string | boolean {
-  if (typeof postfix === 'string' || typeof postfix === 'number') {
-    return POST + (typeof delim === 'string' ? delim : DELIM) + postfix;
-  }
-  return true;
+  return (
+    !isStrOrNum(postfix) ||
+    POST + (typeof delim === 'string' ? delim : DELIM) + postfix
+  );
 }
 export function pre(prefix: string | number, delim?: string): string | boolean {
-  if (typeof prefix === 'string' || typeof prefix === 'number') {
-    return PRE + prefix + (typeof delim === 'string' ? delim : DELIM);
-  }
-  return true;
+  return (
+    !isStrOrNum(prefix) ||
+    PRE + prefix + (typeof delim === 'string' ? delim : DELIM)
+  );
 }
